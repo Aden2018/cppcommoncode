@@ -21,21 +21,14 @@ using namespace std;
 //----------------------------------------------------------------------------
 class CConfigFile
 {
-	//构造函数和析构函数
-private:    //私有
-
-protected:  //保护
-
-public:     //公有
+public:
 	CConfigFile();
 	CConfigFile(char *pConfigFileName);
 	~CConfigFile();
 
-
-	//属性
-private:    //私有
+private:
 	fstream m_CfgFile;
-	short     m_IsOpen;  //文件打开状态
+	short m_IsOpen;  //文件打开状态
 	enum
 	{
 		IS_COMMENT ,    //是注释
@@ -44,30 +37,27 @@ private:    //私有
 		NOT_FOUND       //没有找到指定的变量名
 	};
 
-protected:  //保护
-
-public:     //公有
-
-
-	//服务
-private:    //私有
+private:
 	//查找一个指定的节名
 	short  GetSession(char *pStr,char *SessionName);
+
 	//获得变量的值
 	short GetContent(char *pStr,char *ValueName,char *RetStr);
 
-protected:  //保护
-
-public:     //公有
-	//打开一个指定的配置文件
-	short  Open(char *ConfigFileName);
-	//关闭配置文件
-	void   Close();
-	//根据给定的节名和变量名，从文件中读出变量的值
-	short  GetValue(char *Session,char *ValueName,char *RetStr);
+protected:
 	//返回文件打开状态
 	short  IsOpen() { return m_IsOpen; };
 
+	//打开一个指定的配置文件
+	short  Open(char *ConfigFileName);
+
+	//关闭配置文件
+	void   Close();
+
+public:
+
+	//根据给定的节名和变量名，从文件中读出变量的值
+	short  GetValue(char *Session,char *ValueName,char *RetStr);
 };
 
 #endif //__CONFIGFILE_H__

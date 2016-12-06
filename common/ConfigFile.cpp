@@ -134,36 +134,36 @@ short  CConfigFile::GetValue(char *Session,char *ValueName,char *RetStr)
 }
 
 //----------------------------------------------------------------------------
-// 函数原型： short CConfigFile::GetSession(char *pStr,char *SessionName)
+// 函数原型： short CConfigFile::GetSession(char pStr[i],char *SessionName)
 // 函数功能： 从指定的字符串中查找一个节(在[]中的字符串)的名称
-// 传入参数： char *pStr 指定的字符串
+// 传入参数： char pStr[i] 指定的字符串
 //            char *SessionName 所要查找的节名
 // 传出参数： 无
 // 函数返回： 0  找到指定的节名
 //            -1 未找到指定的节名
 // 注意事项： 无
 //----------------------------------------------------------------------------
-short CConfigFile::GetSession(char *pStr,char *SessionName)
+short CConfigFile::GetSession(char* pStr,char* SessionName)
 {
 	char TmpStr[100];
 	int i=0;
 	int j = 0;
 
-	while( *pStr == ' ' ) i++;   //跳过空格
+	while( pStr[i] == ' ' ) ++i;   //跳过空格
 
-	if( *pStr != '[' )
+	if( pStr[i] != '[' )
 		return -1;  //不是节名
 
-	i++; //跳过'['
+	++i; //跳过'['
 
-	while( *pStr == ' ' ) i++; //跳过空格
+	while( pStr[i] == ' ' ) ++i; //跳过空格
 
 	//获得节名
-	while( *pStr != ' ' && *pStr != ']' )
+	while( pStr[i] != ' ' && pStr[i] != ']' )
 	{
-		TmpStr[j] = *pStr;
-		i++;
-		j++;
+		TmpStr[j] = pStr[i];
+		++i;
+		++j;
 	}
 	TmpStr[j] = 0;
 
@@ -174,9 +174,9 @@ short CConfigFile::GetSession(char *pStr,char *SessionName)
 }
 
 //----------------------------------------------------------------------------
-// 函数原型： short CConfigFile::GetContent(char *pStr,char *ValueName,char *RetStr)
+// 函数原型： short CConfigFile::GetContent(char pStr[i],char *ValueName,char *RetStr)
 // 函数功能： 从指定的字符串中获得变量的值
-// 传入参数： char *pStr      指定的字符串
+// 传入参数： char pStr[i]      指定的字符串
 //            char *ValueName 变量的名称
 //            char *RetStr    存放返回字符串的空间指针
 // 传出参数： 无
@@ -186,7 +186,7 @@ short CConfigFile::GetSession(char *pStr,char *SessionName)
 //            NOT_FOUND  没有找到指定的变量名
 // 注意事项： 无
 //----------------------------------------------------------------------------
-short CConfigFile::GetContent(char *pStr,char *ValueName,char *RetStr)
+short CConfigFile::GetContent(char* pStr,char* ValueName,char* RetStr)
 {
 	char TmpStr[100];
 	int i=0;
@@ -194,18 +194,18 @@ short CConfigFile::GetContent(char *pStr,char *ValueName,char *RetStr)
 
 	RetStr[0] = 0;
 
-	while( *pStr == ' ' ) i++; //去掉开头的空格
+	while( pStr[i] == ' ' ) ++i; //去掉开头的空格
 
-	if( *pStr == '#' ) return IS_COMMENT;  //是注释
-	if( *pStr == '[' ) return IS_SESSION;  //是节名
-	if( *pStr == 0   ) return NOT_FOUND;   //已到行尾，未找到
+	if( pStr[i] == '#' ) return IS_COMMENT;  //是注释
+	if( pStr[i] == '[' ) return IS_SESSION;  //是节名
+	if( pStr[i] == 0   ) return NOT_FOUND;   //已到行尾，未找到
 
 	//获得变量名
-	while( *pStr != ' ' && *pStr != '\t' && *pStr != '=' && pStr != 0)
+	while( pStr[i] != ' ' && pStr[i] != '\t' && pStr[i] != '=' && pStr[i] != 0)
 	{
-		TmpStr[j] = *pStr;
-		i++;
-		j++;
+		TmpStr[j] = pStr[i];
+		++i;
+		++j;
 	}
 	TmpStr[j] = 0;
 
@@ -213,18 +213,20 @@ short CConfigFile::GetContent(char *pStr,char *ValueName,char *RetStr)
 		return NOT_FOUND;  //不是指定的变量
 
 	//去掉空格及'='
-	while( *pStr == ' ' || *pStr == '\t' || *pStr == '=' )
-		i++;
+	while( pStr[i] == ' ' || pStr[i] == '\t' || pStr[i] == '=' )
+		++i;
 
 	//获得变量的值
 	j=0;
-	while( *pStr > ' ' && *pStr != '#' && *pStr != 127)
+	while( pStr[i] >= ' ' && pStr[i] != '#' && pStr[i] < 127 )
 	{
-		RetStr[j] = *pStr;
-		i++;
-		j++;
+		RetStr[j] = pStr[i];
+		++i;
+		++j;
 	}
-	RetStr[j] = 0;
+
+	while( RetStr[--j] == ' ' ); //去掉结尾的空格
+	RetStr[++j] = 0;
 
 	return IS_VALUE;
 }
